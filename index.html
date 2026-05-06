@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Attendance Predictor</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#07111f,#001f3f,#02111f);
+    min-height:100vh;
+    color:white;
+    overflow-x:hidden;
+}
+
+body::before{
+    content:'';
+    position:fixed;
+    width:500px;
+    height:500px;
+    background:rgba(0,255,200,0.08);
+    border-radius:50%;
+    top:-150px;
+    left:-150px;
+    filter:blur(80px);
+}
+
+body::after{
+    content:'';
+    position:fixed;
+    width:500px;
+    height:500px;
+    background:rgba(0,150,255,0.08);
+    border-radius:50%;
+    bottom:-150px;
+    right:-150px;
+    filter:blur(80px);
+}
+
+.container{
+    width:90%;
+    max-width:1200px;
+    margin:auto;
+    padding:40px 0;
+    position:relative;
+    z-index:2;
+}
+
+.hero{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.logo{
+    width:90px;
+    height:90px;
+    margin:auto;
+    border-radius:25px;
+    background:linear-gradient(135deg,#00e5ff,#00ff99);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:40px;
+    box-shadow:0 0 30px rgba(0,255,200,0.5);
+}
+
+.hero h1{
+    margin-top:20px;
+    font-size:50px;
+    font-weight:700;
+}
+
+.hero p{
+    margin-top:10px;
+    color:#8adfff;
+    font-size:18px;
+}
+
+.dashboard{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:25px;
+}
+
+.card{
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.08);
+    backdrop-filter:blur(14px);
+    border-radius:25px;
+    padding:25px;
+    box-shadow:0 0 20px rgba(0,255,255,0.08);
+}
+
+.card h2{
+    margin-bottom:20px;
+    color:#00f0ff;
+}
+
+.input-group{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:15px;
+    margin-bottom:15px;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    border:none;
+    outline:none;
+    border-radius:14px;
+    background:rgba(255,255,255,0.08);
+    color:white;
+    font-size:15px;
+}
+
+input::placeholder{
+    color:#cfd9ff;
+}
+
+button{
+    padding:14px 22px;
+    border:none;
+    border-radius:40px;
+    cursor:pointer;
+    font-weight:600;
+    transition:0.3s;
+}
+
+.add-btn{
+    background:linear-gradient(135deg,#00f0ff,#00ff99);
+    color:black;
+    margin-top:10px;
+}
+
+.calc-btn{
+    background:linear-gradient(135deg,#8a2be2,#00c3ff);
+    color:white;
+    margin-top:20px;
+}
+
+.reset-btn{
+    background:linear-gradient(135deg,#ff4d4d,#ff0066);
+    color:white;
+    margin-top:15px;
+}
+
+button:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 20px rgba(0,255,255,0.4);
+}
+
+.subject-card{
+    background:rgba(255,255,255,0.05);
+    border-radius:18px;
+    padding:20px;
+    margin-top:20px;
+}
+
+.subject-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:12px;
+}
+
+.badge{
+    padding:6px 12px;
+    border-radius:30px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.green{
+    background:#00c853;
+    color:white;
+}
+
+.yellow{
+    background:#ffc107;
+    color:black;
+}
+
+.red{
+    background:#ff1744;
+    color:white;
+}
+
+.progress-bar{
+    width:100%;
+    height:12px;
+    background:rgba(255,255,255,0.1);
+    border-radius:20px;
+    overflow:hidden;
+    margin:15px 0;
+}
+
+.progress{
+    height:100%;
+    border-radius:20px;
+}
+
+.stats p{
+    margin:8px 0;
+    color:#d9e9ff;
+}
+
+.summary-card{
+    text-align:center;
+}
+
+.circle{
+    width:170px;
+    height:170px;
+    border-radius:50%;
+    background:conic-gradient(#00ff99 0deg,#00f0ff 0deg,#1f2d4d 0deg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:20px auto;
+    position:relative;
+}
+
+.circle::before{
+    content:'';
+    position:absolute;
+    width:130px;
+    height:130px;
+    border-radius:50%;
+    background:#07111f;
+}
+
+.circle span{
+    position:relative;
+    z-index:2;
+    font-size:30px;
+    font-weight:700;
+}
+
+.alert-box{
+    margin-top:20px;
+    padding:18px;
+    border-radius:18px;
+    font-weight:600;
+}
+
+.features{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+    margin-top:40px;
+}
+
+.feature-card{
+    background:rgba(255,255,255,0.05);
+    padding:25px;
+    border-radius:22px;
+    text-align:center;
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+.feature-card h3{
+    margin:15px 0;
+    color:#00f0ff;
+}
+
+.feature-card p{
+    color:#dce9ff;
+    font-size:14px;
+}
+
+footer{
+    text-align:center;
+    padding:40px 0 10px;
+    color:#8ea8c9;
+}
+
+@media(max-width:1000px){
+
+    .dashboard{
+        grid-template-columns:1fr;
+    }
+
+    .features{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:700px){
+
+    .input-group{
+        grid-template-columns:1fr;
+    }
+
+    .features{
+        grid-template-columns:1fr;
+    }
+
+    .hero h1{
+        font-size:38px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="hero">
+    <div class="logo">🎓</div>
+    <h1>Smart Attendance Predictor</h1>
+    <p>Track attendance smartly and stay above 75%</p>
+</div>
+
+<div class="dashboard">
+
+<div class="card">
+
+    <h2>📚 Add Subject Attendance</h2>
+
+    <div class="input-group">
+
+        <input type="text" id="subjectName" placeholder="Subject Name">
+
+        <input type="number" id="totalClasses" placeholder="Total Classes">
+
+        <input type="number" id="attendedClasses" placeholder="Classes Attended">
+
+    </div>
+
+    <button class="add-btn" onclick="addSubject()">➕ Add Subject</button>
+
+    <div id="subjectsContainer"></div>
+
+    <div style="margin-top:25px;">
+
+        <input type="number" id="targetAttendance" placeholder="Required Attendance % (Example: 75)">
+
+    </div>
+
+    <button class="calc-btn" onclick="calculateOverall()">
+        📊 Calculate Overall Attendance
+    </button>
+
+    <button class="reset-btn" onclick="resetAll()">
+        🔄 Reset
+    </button>
+
+</div>
+
+<div class="card summary-card">
+
+    <h2>📈 Overall Attendance</h2>
+
+    <div class="circle">
+        <span id="overallPercent">0%</span>
+    </div>
+
+    <div id="overallStatus"></div>
+
+    <div id="overallAlert"></div>
+
+</div>
+
+</div>
+
+<div class="features">
+
+<div class="feature-card">
+    <div style="font-size:40px;">🎯</div>
+    <h3>Target Attendance</h3>
+    <p>Predict classes required to reach 75% attendance safely.</p>
+</div>
+
+<div class="feature-card">
+    <div style="font-size:40px;">🚨</div>
+    <h3>Defaulter Alert</h3>
+    <p>Get instant warnings when attendance falls below safe levels.</p>
+</div>
+
+<div class="feature-card">
+    <div style="font-size:40px;">📊</div>
+    <h3>Smart Analytics</h3>
+    <p>Track attendance subject-wise with visual indicators.</p>
+</div>
+
+<div class="feature-card">
+    <div style="font-size:40px;">🏆</div>
+    <h3>Achievement Badges</h3>
+    <p>Earn attendance badges based on performance.</p>
+</div>
+
+</div>
+
+<footer>
+    Smart Attendance Predictor • SY CSE Mini Project
+</footer>
+
+</div>
+
+<script>
+
+let subjects = [];
+
+function addSubject(){
+
+    let subject = document.getElementById('subjectName').value;
+
+    let total = parseInt(document.getElementById('totalClasses').value);
+
+    let attended = parseInt(document.getElementById('attendedClasses').value);
+
+    if(subject === '' || isNaN(total) || isNaN(attended)){
+
+        alert('Please fill all fields');
+
+        return;
+    }
+
+    let percent = ((attended / total) * 100).toFixed(1);
+
+    subjects.push({
+        subject,
+        total,
+        attended,
+        percent
+    });
+
+    displaySubjects();
+
+    document.getElementById('subjectName').value='';
+
+    document.getElementById('totalClasses').value='';
+
+    document.getElementById('attendedClasses').value='';
+}
+
+function displaySubjects(){
+
+    let container = document.getElementById('subjectsContainer');
+
+    container.innerHTML='';
+
+    subjects.forEach(sub=>{
+
+        let status='';
+        let color='';
+        let progressColor='';
+
+        if(sub.percent >= 75){
+
+            status='Safe';
+            color='green';
+            progressColor='#00ff99';
+        }
+
+        else if(sub.percent >= 60){
+
+            status='Warning';
+            color='yellow';
+            progressColor='#ffc107';
+        }
+
+        else{
+
+            status='Critical';
+            color='red';
+            progressColor='#ff1744';
+        }
+
+        let required = 0;
+
+        if(sub.percent < 75){
+
+            required = Math.ceil(
+                (0.75 * sub.total - sub.attended) / (1 - 0.75)
+            );
+        }
+
+        container.innerHTML += `
+
+        <div class="subject-card">
+
+            <div class="subject-title">
+
+                <h3>📘 ${sub.subject}</h3>
+
+                <div class="badge ${color}">
+                    ${status}
+                </div>
+
+            </div>
+
+            <div class="progress-bar">
+
+                <div class="progress"
+                style="
+                width:${sub.percent}%;
+                background:${progressColor};
+                ">
+                </div>
+
+            </div>
+
+            <div class="stats">
+
+                <p>📊 Attendance: ${sub.percent}%</p>
+
+                <p>🏫 Attended: ${sub.attended}/${sub.total}</p>
+
+                <p>🎯 Classes Needed For 75%: ${required}</p>
+
+            </div>
+
+        </div>
+        `;
+    });
+}
+
+function calculateOverall(){
+
+    let targetAttendance =
+    parseFloat(document.getElementById('targetAttendance').value);
+
+    if(isNaN(targetAttendance)){
+
+        targetAttendance = 75;
+    }
+
+    if(subjects.length === 0){
+
+        alert('Add subjects first');
+
+        return;
+    }
+
+    let totalClasses = 0;
+
+    let totalAttended = 0;
+
+    subjects.forEach(sub=>{
+
+        totalClasses += sub.total;
+
+        totalAttended += sub.attended;
+    });
+
+    let overall =
+    ((totalAttended / totalClasses) * 100).toFixed(1);
+
+    document.getElementById('overallPercent').innerHTML =
+    overall + '%';
+
+    let degree = (overall / 100) * 360;
+
+    document.querySelector('.circle').style.background =
+    `conic-gradient(
+    #00ff99 ${degree}deg,
+    #00f0ff ${degree}deg,
+    #1f2d4d 0deg
+    )`;
+
+    let requiredClasses = 0;
+
+    if(overall < targetAttendance){
+
+        requiredClasses = Math.ceil(
+            (((targetAttendance/100) * totalClasses)
+            - totalAttended)
+            /
+            (1 - (targetAttendance/100))
+        );
+    }
+
+    let statusHTML='';
+
+    let alertHTML='';
+
+    if(overall >= 75){
+
+        statusHTML =
+        '<div class="badge green">🟢 Excellent Attendance</div>';
+
+        alertHTML =
+        `<div class="alert-box green">
+            🎉 Great! Your attendance is above 75%.
+        </div>`;
+    }
+
+    else if(overall >= 60){
+
+        statusHTML =
+        '<div class="badge yellow">🟡 Warning Zone</div>';
+
+        alertHTML =
+        `<div class="alert-box yellow">
+            ⚠️ Attend more lectures to stay safe.
+        </div>`;
+    }
+
+    else{
+
+        statusHTML =
+        '<div class="badge red">🔴 Defaulter Alert</div>';
+
+        alertHTML =
+        `<div class="alert-box red">
+            🚨 Critical attendance shortage detected.
+        </div>`;
+    }
+
+    document.getElementById('overallStatus').innerHTML =
+    statusHTML;
+
+    document.getElementById('overallAlert').innerHTML =
+
+    `
+
+    ${alertHTML}
+
+    <div style="
+    margin-top:20px;
+    padding:18px;
+    border-radius:18px;
+    background:rgba(255,255,255,0.06);
+    ">
+
+        <h3 style="
+        color:#00f0ff;
+        margin-bottom:12px;
+        ">
+        📊 Overall Attendance Analysis
+        </h3>
+
+        <p>📚 Total Classes:
+        <b>${totalClasses}</b></p>
+
+        <p>✅ Total Attended:
+        <b>${totalAttended}</b></p>
+
+        <p>📈 Overall Attendance:
+        <b>${overall}%</b></p>
+
+        <p>🎯 Target Attendance:
+        <b>${targetAttendance}%</b></p>
+
+        <p style="
+        margin-top:10px;
+        color:#00ff99;
+        font-weight:600;
+        ">
+        🏫 Classes Needed To Reach
+        ${targetAttendance}% :
+        <b>${requiredClasses}</b>
+        </p>
+
+    </div>
+    `;
+}
+
+function resetAll(){
+
+    subjects=[];
+
+    document.getElementById('subjectsContainer').innerHTML='';
+
+    document.getElementById('overallPercent').innerHTML='0%';
+
+    document.querySelector('.circle').style.background =
+    `conic-gradient(
+    #00ff99 0deg,
+    #00f0ff 0deg,
+    #1f2d4d 0deg
+    )`;
+
+    document.getElementById('overallStatus').innerHTML='';
+
+    document.getElementById('overallAlert').innerHTML='';
+}
+
+</script>
+
+</body>
+</html>
